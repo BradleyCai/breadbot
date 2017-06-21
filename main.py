@@ -8,7 +8,7 @@ def getimage():
 
     dirlist = os.listdir(unused_path)
 
-    if (len(dirlist) > 0):
+    if len(dirlist) > 0:
         imgname = random.choice(dirlist)
     else:
         print("Ran out of images")
@@ -31,12 +31,12 @@ def getsource(imgname):
         return None, None
 
 def format_source(pixiv_url, page):
-    if (pixiv_url == None):
+    if pixiv_url == None:
         return "**No source**"
 
     res = "**Source: **" + pixiv_url
 
-    if (page != "0"):
+    if page != "0":
         res += "\n**Page: **" + page
 
     return res
