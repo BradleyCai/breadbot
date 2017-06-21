@@ -31,7 +31,7 @@ def getsource(imgname):
         m = re.match(r'illust_(\d{7,9})_\d{8}_\d{6}', imgname)
 
         if m:
-            return pixiv_url + m.group(1), 0
+            return pixiv_url + m.group(1), "0"
 
     return None, None
 
@@ -69,7 +69,7 @@ def main():
     imgname = getimage()
     if (imgname == None):
         logging.warning("Ran out of images")
-        sys.exit()
+        sys.exit(1)
     img = open(imgname[0] + imgname[1], "rb")
 
     pixiv_url, page = getsource(imgname[1])
