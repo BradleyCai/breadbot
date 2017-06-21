@@ -1,5 +1,6 @@
-import requests
-import os, time, random, re, sys
+from datetime import datetime
+import random, re, requests, logging
+import os, time, sys
 
 # Returns the path and image name as an array
 def getimage():
@@ -58,6 +59,7 @@ def post_text(url, text):
 def main():
     random.seed(time.time())
     url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
+    logging.basicConfig(filename='log', level=logging.DEBUG)
 
     imgname = getimage()
     img = open(imgname[0] + imgname[1], "rb")
@@ -66,8 +68,10 @@ def main():
     text = format_source(pixiv_url, page)
     text += "\n**Original file name: **" + imgname[1]
 
-    print("Text: ", text, "Image name:", imgname)
-    print("POST response:", post_img(url, img, text=text))
+    logging.info("Time: " + str(datetime.now()))
+    logging.info("Text: " + text)
+    logging.info("Image name:" + imgname[0] + imgname[1])
+    logging.info("POST response:", post_img(url, img, text=text))
 
     img.close()
 
