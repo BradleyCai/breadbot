@@ -1,4 +1,13 @@
+# ignore python compiled symbols
+*.pyc
+
 # ignore all pictures
 *.png
 *.jpg
 *.jpeg
+
+# ignore log file
+log
+
+# ignore picture folder
+imgs
