@@ -28,8 +28,14 @@ def getsource(imgname):
     if m:
         return pixiv_url + m.group(1), m.group(2)
     else:
-        return None, None
+        m = re.match(r'illust_(\d{7,9})_\d{8}_\d{6}', imgname)
 
+        if m:
+            return pixiv_url + m.group(1), 0
+
+    return None, None
+
+# Formats the source name for discord
 def format_source(pixiv_url, page):
     if pixiv_url == None:
         return "**No source**"
