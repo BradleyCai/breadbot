@@ -73,7 +73,7 @@ def main():
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name:" + imgname[0] + imgname[1])
-    logging.info("POST response:", post_img(url, img, text=text))
+    logging.info("POST response:" + post_img(url, img, text=text))
 
     img.close()
 
