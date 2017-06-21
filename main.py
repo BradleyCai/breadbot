@@ -23,7 +23,7 @@ def getimage():
 def getsource(imgname):
     pixiv_url = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id='
 
-    m = re.match(r'.*(\d{7,9})_?p(\d{1,3})', imgname)
+    m = re.match(r'(\d{7,9})_?p(\d{1,3})', imgname)
 
     if m:
         return pixiv_url + m.group(1), m.group(2)
@@ -47,17 +47,17 @@ def post_img(url, img, text=None):
     files = {'file': img}
 
     if text == None:
-        requests.post(url, files=files)
+        return requests.post(url, files=files)
     else:
-        requests.post(url, data=payload, files=files)
+        return requests.post(url, data=payload, files=files)
 
 # Posts text
 def post_text(url, text):
-    requests.post(url, data={'content': text})
+    return requests.post(url, data={'content': text})
 
 def main():
     random.seed(time.time())
-    url = 'https://discordapp.com/api/webhooks/326506189796147201/ezbjsocncvzrtvbkbxe0-_mqqvos5jxgnxnxlv90h20adidjc25syrxppvo53mwwdeor'
+    url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
 
     imgname = getimage()
     img = open(imgname[0] + imgname[1], "rb")
@@ -66,8 +66,8 @@ def main():
     text = format_source(pixiv_url, page)
     text += "\n**Original file name: **" + imgname[1]
 
-    print(text, imgname)
-    post(text, img)
+    print("Text: ", text, "Image name:", imgname)
+    print("POST response:", post_img(url, img, text=text))
 
     img.close()
 
