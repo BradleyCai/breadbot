@@ -12,8 +12,7 @@ def getimage():
     if len(dirlist) > 0:
         imgname = random.choice(dirlist)
     else:
-        print("Ran out of images")
-        sys.exit()
+        return None
 
     os.rename(unused_path + imgname, used_path + imgname)
 
@@ -62,6 +61,9 @@ def main():
     logging.basicConfig(filename='log', level=logging.DEBUG)
 
     imgname = getimage()
+    if (imgname == None):
+        logging.warning("Ran out of images")
+        sys.exit()
     img = open(imgname[0] + imgname[1], "rb")
 
     pixiv_url, page = getsource(imgname[1])
