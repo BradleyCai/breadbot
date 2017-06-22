@@ -67,7 +67,7 @@ def main():
     logging.basicConfig(filename='log', level=logging.DEBUG)
 
     imgname = getimage()
-    if (imgname == None):
+    if imgname == None:
         logging.warning("Ran out of images")
         sys.exit(1)
     img = open(imgname[0] + imgname[1], "rb")
@@ -80,6 +80,7 @@ def main():
     logging.info("Text: " + text)
     logging.info("Image name:" + imgname[0] + imgname[1])
     logging.info("POST response:" + str(post_img(url, img, text=text)))
+    logging.info("=========================================================================================")
 
     img.close()
 
