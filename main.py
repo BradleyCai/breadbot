@@ -3,10 +3,7 @@ import random, re, requests, logging
 import os, time, sys
 
 # Returns the path and image name as an array
-def getimage():
-    unused_path = "./imgs/unused/"
-    used_path = "./imgs/used/"
-
+def getimage(unused_path, used_path):
     dirlist = os.listdir(unused_path)
 
     if len(dirlist) > 0:
@@ -36,11 +33,11 @@ def getsource(imgname):
     return None, None
 
 # Formats the source name for discord
-def format_source(pixiv_url, page):
-    if pixiv_url == None:
+def format_source(source_url, page):
+    if source_url == None:
         return "**No source**"
 
-    res = "**Source: **" + pixiv_url
+    res = "**Source: **" + source_url
 
     if page != "0":
         res += "\n**Page: **" + page
@@ -62,11 +59,14 @@ def post_text(url, text):
     return requests.post(url, data={'content': text})
 
 def main():
-    random.seed(time.time())
     url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
-    logging.basicConfig(filename='log', level=logging.DEBUG)
+    unused_path = "./imgs/unused/"
+    used_path = "./imgs/used/"
 
-    imgname = getimage()
+    logging.basicConfig(filename='log', level=logging.DEBUG)
+    random.seed(time.time())
+
+    imgname = getimage(unused_path, used_path)
     if imgname == None:
         logging.warning("Ran out of images")
         sys.exit(1)
@@ -79,7 +79,7 @@ def main():
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name:" + imgname[0] + imgname[1])
-    logging.info("POST response:" + str(post_img(url, img, text=text)))
+    logging.info("POST response: " + str(post_img(url, img, text=text)))
     logging.info("=========================================================================================")
 
     img.close()
