@@ -1,3 +1,5 @@
+import discordhook as dh
+
 from datetime import datetime
 import random, re, requests, logging
 import os, time, sys
@@ -44,20 +46,6 @@ def format_source(source_url, page):
 
     return res
 
-# Posts an image with an optional caption
-def post_img(url, img, text=None):
-    payload = {'content': text}
-    files = {'file': img}
-
-    if text == None:
-        return requests.post(url, files=files)
-    else:
-        return requests.post(url, data=payload, files=files)
-
-# Posts text
-def post_text(url, text):
-    return requests.post(url, data={'content': text})
-
 def main():
     url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
     unused_path = "./imgs/unused/"
@@ -79,7 +67,7 @@ def main():
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name:" + imgname[0] + imgname[1])
-    logging.info("POST response: " + str(post_img(url, img, text=text)))
+    logging.info("POST response: " + str(dh.post_img(url, img, text=text)))
     logging.info("=========================================================================================")
 
     img.close()
