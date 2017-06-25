@@ -40,7 +40,7 @@ def format_source(source_url, page):
     res = "**Source: **<" + source_url + ">"
 
     if page != "0":
-        res += "\n**Page: **" + page
+        res += "\n**Page: **" + str(int(page) + 1)
 
     return res
 
