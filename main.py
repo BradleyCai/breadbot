@@ -4,18 +4,18 @@ from datetime import datetime, date
 import random, re, requests, logging
 import os, time, sys
 
-# Returns the path and image name as an array
+# Returns a random image in unused_path, moves it to used_path, and returns the
+# image name
 def getimage(unused_path, used_path):
     dirlist = os.listdir(unused_path)
 
-    if len(dirlist) > 0:
-        imgname = random.choice(dirlist)
-    else:
+    if len(dirlist) < 0:
         return None
 
+    imgname = random.choice(dirlist)
     os.rename(unused_path + imgname, used_path + imgname)
 
-    return [used_path, imgname]
+    return imgname
 
 # Has two returns. If a pixiv source is found, returns the pixiv url and the page
 # If no source is found, returns None and None
@@ -58,15 +58,15 @@ def main():
     if imgname == None:
         logging.warning("Ran out of images")
         sys.exit(1)
-    img = open(imgname[0] + imgname[1], "rb")
+    img = open(used_path + imgname, "rb")
 
-    pixiv_url, page = getsource(imgname[1])
-    text = format_source(pixiv_url, page)
-    text += "\n**Original filename: **" + imgname[1]
+    pixiv_url, page = getsource(imgname)
+    text = format_source(pixiv_url, page, imgname)
+    text += "\n**Original filename: **" + imgname
 
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
-    logging.info("Image name:" + imgname[0] + imgname[1])
+    logging.info("Image name:" + used_path + imgname)
     logging.info("POST response: " + str(dh.post_img(url, img, text=text)))
     logging.info("=========================================================================================")
 
