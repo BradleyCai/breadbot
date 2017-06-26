@@ -34,15 +34,17 @@ def getsource(imgname):
 
     return None, None
 
-# Formats the source name for discord
-def format_source(source_url, page):
+# Creates a suitable message about the image to send to discord
+def format_source(source_url, page, imgname):
     if source_url == None:
-        return "**No source**"
+        return '**No source**'
 
-    res = "**Source: **<" + source_url + ">"
+    res = '**Source: **<' + source_url + '>'
 
-    if page != "0":
-        res += "\n**Page: **" + str(int(page) + 1)
+    if page != '0':
+        res += '\n**Page: **' + str(int(page) + 1)
+
+    res += '\n**Original filename: **`' + imgname + '`'
 
     return res
 
@@ -62,7 +64,6 @@ def main():
 
     pixiv_url, page = getsource(imgname)
     text = format_source(pixiv_url, page, imgname)
-    text += "\n**Original filename: **" + imgname
 
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
