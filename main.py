@@ -1,6 +1,6 @@
 import discordhook as dh
 
-from datetime import datetime
+from datetime import datetime, date
 import random, re, requests, logging
 import os, time, sys
 
@@ -51,7 +51,7 @@ def main():
     unused_path = "./imgs/unused/"
     used_path = "./imgs/used/"
 
-    logging.basicConfig(filename='log', level=logging.DEBUG)
+    logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
     random.seed(time.time())
 
     imgname = getimage(unused_path, used_path)
