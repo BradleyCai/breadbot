@@ -1,3 +1,5 @@
+import requests
+
 # Posts an image with an optional caption
 def post_img(url, img, text=None):
     payload = {'content': text}
