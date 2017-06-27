@@ -8,6 +8,7 @@
 
 # ignore log file
 log
+logs/
 
 # ignore picture folder
 imgs
