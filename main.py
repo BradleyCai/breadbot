@@ -45,7 +45,7 @@ def format_source(source_url, page, imgname):
         res = '**Source: **<' + source_url + '>'
 
         if page == '?':
-            res += '\n**Page: ** Page unknown"
+            res += '\n**Page: ** Page unknown'
         elif page != '0':
             res += '\n**Page: **' + str(int(page) + 1)
 
