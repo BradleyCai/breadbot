@@ -12,3 +12,8 @@ logs/
 
 # ignore picture folder
 imgs
+
+# ignore scripts
+*.sh
+*.vbs
+*.bat
