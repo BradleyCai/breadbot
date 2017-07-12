@@ -54,8 +54,8 @@ def main():
     used_path = "./imgs/used/"
 
     logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
-    random.seed(time.time())
 
+    random.seed(time.time())
     imgname = getimage(unused_path, used_path)
     if imgname == None:
         logging.warning("Ran out of images")
@@ -65,10 +65,12 @@ def main():
     pixiv_url, page = getsource(imgname)
     text = format_source(pixiv_url, page, imgname)
 
+    response = str(dh.post_img(url, img, text=text)) # post image
+
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name:" + used_path + imgname)
-    logging.info("POST response: " + str(dh.post_img(url, img, text=text)))
+    logging.info("POST response: " + response)
     logging.info("=========================================================================================")
 
     img.close()
