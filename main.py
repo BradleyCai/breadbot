@@ -37,12 +37,12 @@ def getsource(imgname):
 # Creates a suitable message about the image to send to discord
 def format_source(source_url, page, imgname):
     if source_url == None:
-        return '**No source**'
+        res = '**No source**'
+    else:
+        res = '**Source: **<' + source_url + '>'
 
-    res = '**Source: **<' + source_url + '>'
-
-    if page != '0':
-        res += '\n**Page: **' + str(int(page) + 1)
+        if page != '0':
+            res += '\n**Page: **' + str(int(page) + 1)
 
     res += '\n**Original filename: **`' + imgname + '`'
 
