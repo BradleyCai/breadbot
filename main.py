@@ -1,7 +1,7 @@
 import discordhook as dh
 
 from datetime import datetime, date
-import random, re, requests, logging
+import random, re, requests, logging, json
 import os, time, sys
 
 # Returns a random image in unused_path, moves it to used_path, and returns the
@@ -70,12 +70,14 @@ def main():
     pixiv_url, page = getsource(imgname)
     text = format_source(pixiv_url, page, imgname)
 
-    response = str(dh.post_img(url, img, text=text)) # post image
+    response = dh.post_img(url, img, text=text) # post image
 
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
-    logging.info("Image name:" + used_path + imgname)
-    logging.info("POST response: " + response)
+    logging.info("Image name: " + used_path + imgname)
+    logging.info("HTTP response code: " + str(response.status_code))
+    with response.json() as rjson:
+        logging.info("JSON response: \n" + json.dumps(rjson, indent=4))
     logging.info("=========================================================================================")
 
     img.close()
