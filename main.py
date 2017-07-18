@@ -57,10 +57,9 @@ def main():
     url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
     unused_path = "./imgs/unused/"
     used_path = "./imgs/used/"
-
     logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
-
     random.seed(time.time())
+
     imgname = getimage(unused_path, used_path)
     if imgname == None:
         logging.warning("Ran out of images")
@@ -72,6 +71,9 @@ def main():
 
     response = dh.post_img(url, img, text=text) # post image
 
+    # Logging results
+    if response.status_code != requests.codes.ok:
+        logging.error("POST didn't go through successfully")
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name: " + used_path + imgname)
