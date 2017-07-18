@@ -72,16 +72,16 @@ def main():
     response = dh.post_img(url, img, text=text) # post image
 
     # Logging results
-    if response.status_code != requests.codes.ok:
-        logging.error("POST didn't go through successfully")
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name: " + used_path + imgname)
     logging.info("HTTP response code: " + str(response.status_code))
-    try:
-        logging.info("JSON response: \n" + json.dumps(response.json(), indent=4))
-    except(ValueError):
-        logging.info("Json response: None")
+    if response.status_code != requests.codes.ok:
+        logging.error("POST didn't go through successfully")
+        try:
+            logging.info("JSON response: \n" + json.dumps(response.json(), indent=4))
+        except(ValueError):
+            logging.info("Json response: None")
     logging.info("=========================================================================================")
 
     img.close()
