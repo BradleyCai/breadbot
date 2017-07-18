@@ -78,8 +78,10 @@ def main():
     logging.info("Text: " + text)
     logging.info("Image name: " + used_path + imgname)
     logging.info("HTTP response code: " + str(response.status_code))
-    with response.json() as rjson:
-        logging.info("JSON response: \n" + json.dumps(rjson, indent=4))
+    try:
+        logging.info("JSON response: \n" + json.dumps(response.json(), indent=4))
+    except(ValueError):
+        logging.info("Json response: None")
     logging.info("=========================================================================================")
 
     img.close()
