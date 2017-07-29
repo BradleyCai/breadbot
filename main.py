@@ -1,7 +1,9 @@
 import discordhook as dh
+import sourcefinder as source
+from formatter import format_discord
 
 from datetime import datetime, date
-import random, re, requests, logging, json
+import random, requests, logging, json
 import os, time, sys
 
 # Returns a random image in unused_path, moves it to used_path, and returns the
@@ -17,41 +19,19 @@ def getimage(unused_path, used_path):
 
     return imgname
 
-# Tries to find source of the image
-# For now, only supports images saved from pixiv
-def getsource(imgname):
-    return get_pixiv_source(imgname)
-
-def get_pixiv_source(imgname):
-    pixiv_url = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id='
-
-    # Match computer saved links (ex: 28022143_p0.jpg)
-    m = re.match(r'(\d{7,9})_?p(\d{1,3})', imgname)
-    if m:
-        return pixiv_url + m.group(1), m.group(2)
-
-    # Match mobile saved links (ex: illust_51503473_20170620_040102.jpg)
-    m = re.match(r'illust_(\d{7,9})_\d{8}_\d{6}', imgname)
-    if m:
-        return pixiv_url + m.group(1), '?' # page is not saved in link name
-
-    return None, None
-
-# Creates a suitable message about the image to send to discord
-def format_source(source_url, page, imgname):
-    if source_url == None:
-        res = '**No source**'
-    else:
-        res = '**Source: **<' + source_url + '>'
-
-        if page == '?':
-            res += '\n**Page: ** Page unknown'
-        elif page != '0':
-            res += '\n**Page: **' + str(int(page) + 1)
-
-    res += '\n**Original filename: **`' + imgname + '`'
-
-    return res
+# Logs the results of the POST. If fails
+def log(text, imgname, response):
+    logging.info("Time: " + str(datetime.now()))
+    logging.info("Text: " + text)
+    logging.info("Image name: " + imgname)
+    logging.info("HTTP response code: " + str(response.status_code))
+    if response.status_code != requests.codes.ok:
+        logging.error("POST didn't go through successfully")
+        try:
+            logging.info("JSON response: \n" + json.dumps(response.json(), indent=4))
+        except(ValueError):
+            logging.info("Json response: None")
+    logging.info("=========================================================================================")
 
 def main():
     url = 'https://discordapp.com/api/webhooks/326506189796147201/EZbjsoCNCvzRtVbKBXe0-_mQQVos5JXgNxNxlv90h20ADIdJc25SyrXpPvo53mwwDeor'
@@ -66,23 +46,12 @@ def main():
         sys.exit(1)
     img = open(used_path + imgname, "rb")
 
-    pixiv_url, page = getsource(imgname)
-    text = format_source(pixiv_url, page, imgname)
+    pixiv_url, page = source.getsource(imgname)
+    text = format_discord(pixiv_url, page, imgname)
 
     response = dh.post_img(url, img, text=text) # post image
 
-    # Logging results
-    logging.info("Time: " + str(datetime.now()))
-    logging.info("Text: " + text)
-    logging.info("Image name: " + used_path + imgname)
-    logging.info("HTTP response code: " + str(response.status_code))
-    if response.status_code != requests.codes.ok:
-        logging.error("POST didn't go through successfully")
-        try:
-            logging.info("JSON response: \n" + json.dumps(response.json(), indent=4))
-        except(ValueError):
-            logging.info("Json response: None")
-    logging.info("=========================================================================================")
+    log(text, used_path + imgname, response) # Log the results
 
     img.close()
 
