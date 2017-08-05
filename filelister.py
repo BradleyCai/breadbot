@@ -1,4 +1,4 @@
-import os, random, shutil, json
+import os, random, shutil, json, logging
 
 def initlist(bot_name, hook_id, hook_token, used=[]):
     config = {'filelist': used + os.listdir('./bots/files'), 'hook_id': hook_id, 'hook_token': hook_token, 'file_i': len(used)}
@@ -23,8 +23,8 @@ def relist(config_file):
 
 def getfile(config_file):
     config = json.load(config_file)
-    if config['file_i'] == len(config['filelist']):
-        return None
+    if config['file_i'] >= len(config['filelist']):
+        logging.warning('Ran out of files. Looping over from the beginning.')
     res = config['filelist'][config['file_i'] % len(config['filelist'])]
     config['file_i'] += 1
     config_file.seek(0, 0)

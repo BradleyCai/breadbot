@@ -35,10 +35,6 @@ def main():
     with open('./bots/test.json', 'r+') as config_file:
         imgname = filelister.getfile(config_file)
 
-    if imgname == None:
-        logging.warning('Ran out of images')
-        sys.exit(1)
-
     with open('./bots/files/' + imgname, "rb") as img:
         pixiv_url, page = source.getsource(imgname)
         text = format_discord(pixiv_url, page, imgname)
