@@ -3,7 +3,6 @@ from datetime import datetime, date
 
 # Logs the results of the POST. If fails
 def log(text, imgname, response):
-    logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
     logging.info("Time: " + str(datetime.now()))
     logging.info("Text: " + text)
     logging.info("Image name: " + imgname)

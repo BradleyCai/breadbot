@@ -24,6 +24,7 @@ def format_discord(source_url, page, imgname):
 
 def main():
     bot_name = sys.argv[1]
+    logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
     random.seed(time.time())
 
     with open('./bots/test.json', 'r') as config_file:
