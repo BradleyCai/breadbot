@@ -1,9 +1,7 @@
-import discordhook as discord
-import sourcefinder as source
-import filelister
+import filelister, sourcefinder, discordhook, source
 from logger import log
 
-import random, logging, json
+import random, logging, json, argparse, datetime
 import os, time, sys
 
 # Creates a suitable message about the image to send to discord
@@ -23,24 +21,36 @@ def format_discord(source_url, page, imgname):
     return res
 
 def main():
-    bot_name = sys.argv[1]
-    logging.basicConfig(filename='logs/' + str(date.today()), level=logging.DEBUG)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('name', help='specify name of server', type=str)
+    args = parser.parse_args()
     random.seed(time.time())
+    config_name = './bots/{}.json'.format(args.name)
 
-    with open('./bots/test.json', 'r') as config_file:
+    # initalize logging
+    if not os.path.isdir('logs/'):
+        print('Making a logs folder')
+        os.mkdir('logs/')
+    logging.basicConfig(filename='logs/' + str(datetime.date.today()), level=logging.DEBUG)
+
+    if not os.path.exists(config_name):
+        print('Configuration file doesn\'t exist for the server you specified! Use filelister.py to create one')
+        sys.exit(1)
+
+    with open(config_name, 'r') as config_file:
         config = json.load(config_file)
         hook_id = config['hook_id']
         hook_token = config['hook_token']
 
-    with open('./bots/test.json', 'r+') as config_file:
+    with open(config_name, 'r+') as config_file:
         imgname = filelister.getfile(config_file)
 
     with open('./bots/files/' + imgname, "rb") as img:
-        pixiv_url, page = source.getsource(imgname)
-        text = format_discord(pixiv_url, page, imgname)
-        response = discord.post_img(hook_id, hook_token, img, text=text)
+        imgsource = sourcefinder.getsource(imgname)
+        text = imgsource.format_discord()
+        response = discordhook.post_img(hook_id, hook_token, img, text=text)
 
-    log(text, './bots/files' + imgname, response) # Log the results
+    log(text, './bots/files/' + imgname, response) # Log the results
 
 if __name__ == '__main__':
     main()
