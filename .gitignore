@@ -1,6 +1,9 @@
 # ignore python compiled symbols
 *.pyc
 
+# ignore folder for specific bot information
+bots/
+
 # ignore all pictures
 *.png
 *.jpg
