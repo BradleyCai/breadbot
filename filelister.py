@@ -1,15 +1,16 @@
 import os, random, shutil, json, logging
 
-'''
+"""
 This python script (the 'filelister') is for creating 'filelists'. Filelists
 are for managing a list of files that is associated with a server. The
 'filelister' can initialize a new list, recreate a new list by adding a queue
 to it, and grab a file from the list + update the list. The filelister can be
 used both as a python library and as a commandline tool.
-'''
+"""
 
 def initlist(bot_name, hook_id, hook_token, used=[]):
-    config = {'filelist': used + os.listdir('./bots/files'), 'hook_id': hook_id, 'hook_token': hook_token, 'file_i': len(used)}
+    config = {'filelist': used + os.listdir('./bots/files'), \
+        'hook_id': hook_id, 'hook_token': hook_token, 'file_i': len(used)}
     shuffle(config['filelist'], len(used))
 
     with open('./bots/{}.json'.format(bot_name), 'w') as config_file:

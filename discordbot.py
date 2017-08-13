@@ -31,10 +31,12 @@ def main():
     if not os.path.isdir('logs/'):
         print('Making a logs folder')
         os.mkdir('logs/')
-    logging.basicConfig(filename='logs/' + str(datetime.date.today()), level=logging.DEBUG)
+    logging.basicConfig(filename='logs/' + str(datetime.date.today()), \
+    level=logging.DEBUG)
 
     if not os.path.exists(config_name):
-        print('Configuration file doesn\'t exist for the server you specified! Use filelister.py to create one')
+        print('Configuration file doesn\'t exist for the server you specified! \
+            Use filelister.py to create one')
         sys.exit(1)
 
     with open(config_name, 'r') as config_file:
