@@ -5,7 +5,7 @@ class source:
         self.artist = artist
         self.img_id = img_id
         self.img_name = img_name
-        self.page = page if page != None else '?'
+        self.page = page
 
     def format_discord(self):
         if self.name == 'pixiv':
@@ -22,7 +22,7 @@ class source:
     def pixiv_format(self):
         res = '**Source: **<{}>'.format(self.url)
 
-        if self.page == '?':
+        if self.page == None:
             res += '\n**Page: ** Page unknown'
         elif self.page != '0':
             res += '\n**Page: **' + str(int(self.page) + 1)

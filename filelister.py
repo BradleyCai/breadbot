@@ -1,7 +1,7 @@
 import os, random, shutil, json, logging
 
 """
-This python script (the 'filelister') is for creating 'filelists'. Filelists
+This python script, the 'filelister', is for creating 'filelists'. Filelists
 are for managing a list of files that is associated with a server. The
 'filelister' can initialize a new list, recreate a new list by adding a queue
 to it, and grab a file from the list + update the list. The filelister can be
