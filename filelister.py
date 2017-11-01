@@ -1,4 +1,4 @@
-import os, random, shutil, json, logging
+import os, random, json, logging
 
 '''
 This python script (the 'filelister') is for creating 'filelists'. Filelists
@@ -19,15 +19,22 @@ def relist(config_file):
     config = json.load(config_file)
     queuelist = os.listdir('./bots/queue')
 
-    # Concat queuelist, shuffle list, and update config file
-    config['filelist'] = config['filelist'] + queuelist
+    # Union queuelist, shuffle list, and update config file
+    config['filelist'] = list(set(config['filelist']).union(queuelist))
     shuffle(config['filelist'], config['file_i'])
     config_file.seek(0, 0)
     config_file.truncate()
     json.dump(config, config_file)
 
     for f in queuelist:
-        shutil.move('./bots/queue/' + f, './bots/files')
+        src = './bots/queue/' + f
+        dst = './bots/files/' + f
+
+        if os.path.exists(dst):
+            print(f + ' is a duplicate. Not moved.')
+        else:
+            os.rename(src, dst)
+            print(f + ' moved.')
 
 def getfile(config_file):
     config = json.load(config_file)
