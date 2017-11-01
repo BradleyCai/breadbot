@@ -55,4 +55,4 @@ def getsource(imgname):
             img_name=imgname)
 
     # if there is no match, then the file doesn't have a recorded source
-    return source('none', img_name=imgname)
+    return source(None, img_name=imgname)
