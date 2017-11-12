@@ -1,6 +1,9 @@
 # ignore python compiled symbols
 *.pyc
 
+# ignore test related material
+tests/bots
+
 # ignore folder for specific bot information
 bots/
 
@@ -12,9 +15,6 @@ bots/
 # ignore log file
 log
 logs/
-
-# ignore picture folder
-imgs
 
 # ignore scripts
 *.sh
