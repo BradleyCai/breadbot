@@ -44,6 +44,33 @@ def relist(config_file, filesdir='bots/files', queuedir='bots/queue'):
             os.rename(src, dst)
             print(f + ' moved.')
 
+# Removes a list of files from the filelist and filesdir
+# The images that came before file_i are untouched and recorded in the filelist
+# The images that came before file_i are still deleted from filesidr
+# Reshuffles everything after file_i
+def removefiles(config_file, files, filesdir='bots/files'):
+    config = json.load(config_file)
+
+    # Remove the files from disk
+    for f in files:
+        path = os.path.join(filesdir, f)
+
+        if os.path.exists(path):
+            os.remove(path)
+            print(f + ' removed.')
+        else:
+            print(f + ' not found. Not removed.')
+
+    config_name = os.path.basename(config_file.name)
+    config_name = os.path.splitext(config_name)[0]
+    initlist(config_name, \
+        config['hook_id'], \
+        config['hook_token'], \
+        config['botsdir'], \
+        config['filesdir'], \
+        config['filelist'][:config['file_i']])
+
+# Returns the next file name from the filelist and updates file_i
 def getfile(config_file):
     config = json.load(config_file)
 
