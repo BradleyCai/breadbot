@@ -8,27 +8,35 @@ to it, and grab a file from the list + update the list. The filelister can be
 used both as a python library and as a commandline tool.
 '''
 
-def initlist(bot_name, hook_id, hook_token, used=[]):
-    config = {'filelist': used + os.listdir('./bots/files'), 'hook_id': hook_id, 'hook_token': hook_token, 'file_i': len(used)}
+def initlist(bot_name, hook_id, hook_token, botsdir='bots', filesdir='bots/files', used=[]):
+    config = { \
+        'hook_id': hook_id, \
+        'hook_token': hook_token, \
+        'botsdir': botsdir, \
+        'filesdir': filesdir, \
+        'filelist': used + os.listdir(filesdir), \
+        'file_i': len(used)}
     shuffle(config['filelist'], len(used))
 
-    with open('./bots/{}.json'.format(bot_name), 'w') as config_file:
+    with open(os.path.join(botsdir, bot_name + '.json'), 'w') as config_file:
         json.dump(config, config_file)
 
-def relist(config_file):
+def relist(config_file, filesdir='bots/files', queuedir='bots/queue'):
     config = json.load(config_file)
-    queuelist = os.listdir('./bots/queue')
+    queuelist = os.listdir(queuedir)
+    left = config['filelist'][:config['file_i']]
+    right = set(config['filelist'][config['file_i']:])
 
     # Union queuelist, shuffle list, and update config file
-    config['filelist'] = list(set(config['filelist']).union(queuelist))
+    config['filelist'] = left + list(right.union(queuelist))
     shuffle(config['filelist'], config['file_i'])
     config_file.seek(0, 0)
     config_file.truncate()
     json.dump(config, config_file)
 
     for f in queuelist:
-        src = './bots/queue/' + f
-        dst = './bots/files/' + f
+        src = os.path.join(queuedir, f)
+        dst = os.path.join(filesdir, f)
 
         if os.path.exists(dst):
             print(f + ' is a duplicate. Not moved.')
@@ -38,8 +46,13 @@ def relist(config_file):
 
 def getfile(config_file):
     config = json.load(config_file)
+
+    if len(config['filelist']) == 0:
+        raise IndexError('Filelist is empty.')
+
     if config['file_i'] >= len(config['filelist']):
         logging.warning('Ran out of files. Looping over from the beginning.')
+
     res = config['filelist'][config['file_i'] % len(config['filelist'])]
     config['file_i'] += 1
     config_file.seek(0, 0)
@@ -47,6 +60,7 @@ def getfile(config_file):
     json.dump(config, config_file)
     return res
 
+# Shuffles a list past the file_i
 def shuffle(l, file_i):
     l_len = len(l)
     for i in range(file_i, l_len - 2):
