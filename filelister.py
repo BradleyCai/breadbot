@@ -8,19 +8,23 @@ to it, and grab a file from the list + update the list. The filelister can be
 used both as a python library and as a commandline tool.
 '''
 
+# Creates a new shuffled initlist
+# Can also be used to update the filelist (with config info, or files dir changes)
+# "used" parameter is a list of already used files. Will update file_i to match
 def initlist(bot_name, hook_id, hook_token, botsdir='bots', filesdir='bots/files', used=[]):
     config = { \
         'hook_id': hook_id, \
         'hook_token': hook_token, \
         'botsdir': botsdir, \
         'filesdir': filesdir, \
-        'filelist': used + os.listdir(filesdir), \
+        'filelist': used + list(set(os.listdir(filesdir)).difference(used)), \
         'file_i': len(used)}
     shuffle(config['filelist'], len(used))
 
     with open(os.path.join(botsdir, bot_name + '.json'), 'w') as config_file:
         json.dump(config, config_file)
 
+# Inserts a directory of files into the current filelist
 def relist(config_file, filesdir='bots/files', queuedir='bots/queue'):
     config = json.load(config_file)
     queuelist = os.listdir(queuedir)
