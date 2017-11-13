@@ -5,6 +5,7 @@ import unittest, os, shutil, json
 
 class FileListerTests(unittest.TestCase):
     def setUp(self):
+        self.bot_name = 'tests'
         self.botsdir = 'tests/bots'
         self.filesdir = 'tests/bots/files'
         self.queuedir = 'tests/bots/queue'
@@ -15,9 +16,9 @@ class FileListerTests(unittest.TestCase):
         shutil.copytree('tests/bots/test-files', self.filesdir)
         shutil.copytree('tests/bots/test-queue', self.queuedir)
 
-        filelister.initlist('tests', 'test', 'test', botsdir=self.botsdir, filesdir=self.filesdir)
+        filelister.initlist(self.bot_name, 'test', 'test', botsdir=self.botsdir, filesdir=self.filesdir)
 
-        self.config_name = os.path.join(self.botsdir, 'tests.json')
+        self.config_name = os.path.join(self.botsdir, self.bot_name + '.json')
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
         self.config['filelist'].sort()
@@ -30,9 +31,9 @@ class FileListerTests(unittest.TestCase):
         self.assertEqual(self.config['filesdir'], self.filesdir)
         self.assertEqual(set(self.config['filelist']), set(os.listdir(self.filesdir)))
 
-    def test_initlist_(self):
+    def test_updatelist(self):
         os.remove(os.path.join(self.filesdir, os.listdir(self.filesdir)[0]))
-        filelister.initlist('tests', 'test2', 'test2', botsdir=self.botsdir, filesdir=self.filesdir, used=['1', '2', '3'])
+        filelister.initlist(self.bot_name, 'test2', 'test2', botsdir=self.botsdir, filesdir=self.filesdir, used=['1', '2', '3'])
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
@@ -43,8 +44,8 @@ class FileListerTests(unittest.TestCase):
         self.assertEqual(self.config['filesdir'], self.filesdir)
         self.assertEqual(len(self.config['filelist']), 11)
 
-    def test_relist(self):
-        filelister.relist(self.config_name, filesdir=self.filesdir, queuedir=self.queuedir)
+    def test_insertfiles(self):
+        filelister.insertfiles(self.config_name, queuedir=self.queuedir)
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
         fileset = set(self.config['filelist'])
@@ -54,7 +55,7 @@ class FileListerTests(unittest.TestCase):
 
     def test_removefiles_all(self):
         self.remove = os.listdir('tests/bots/test-remove')
-        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
+        filelister.removefiles(self.config_name, self.remove)
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
@@ -70,7 +71,7 @@ class FileListerTests(unittest.TestCase):
             self.config['file_i'] = 3
             json.dump(self.config, config_file)
 
-        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
+        filelister.removefiles(self.config_name, self.remove)
 
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
@@ -85,7 +86,7 @@ class FileListerTests(unittest.TestCase):
             self.config['file_i'] = 3
             json.dump(self.config, config_file)
 
-        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
+        filelister.removefiles(self.config_name, self.remove)
 
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
@@ -97,8 +98,7 @@ class FileListerTests(unittest.TestCase):
 
     def test_getfile(self):
         file_i = self.config['file_i']
-        with open(self.config_name, 'r+') as config_file:
-            img_name = filelister.getfile(config_file)
+        img_name = filelister.getfile(self.config_name)
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 

@@ -35,8 +35,7 @@ def main():
         hook_id = config['hook_id']
         hook_token = config['hook_token']
 
-    with open(config_name, 'r+') as config_file:
-        imgname = filelister.getfile(config_file)
+    imgname = filelister.getfile(config_file)
 
     imgpath = os.path.join(filesdir, imgname)
     with open(imgpath, "rb") as img:

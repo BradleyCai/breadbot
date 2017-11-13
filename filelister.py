@@ -25,7 +25,7 @@ def initlist(bot_name, hook_id, hook_token, botsdir='bots', filesdir='bots/files
         json.dump(config, config_file)
 
 # Inserts a directory of files into the current filelist
-def relist(config_name, filesdir='bots/files', queuedir='bots/queue'):
+def insertfiles(config_name, queuedir='bots/queue'):
     with open(config_name) as config_file:
         config = json.load(config_file)
 
@@ -33,7 +33,7 @@ def relist(config_name, filesdir='bots/files', queuedir='bots/queue'):
 
     for f in queuelist:
         src = os.path.join(queuedir, f)
-        dst = os.path.join(filesdir, f)
+        dst = os.path.join(config['filesdir'], f)
 
         if os.path.exists(dst):
             print(f + ' is a duplicate. Not moved.')
@@ -41,9 +41,9 @@ def relist(config_name, filesdir='bots/files', queuedir='bots/queue'):
             os.rename(src, dst)
             print(f + ' moved.')
 
-    config_name = os.path.basename(config_file.name)
-    config_name = os.path.splitext(config_name)[0]
-    initlist(config_name, \
+    bot_name = os.path.basename(config_name)
+    bot_name = os.path.splitext(bot_name)[0]
+    initlist(bot_name, \
         config['hook_id'], \
         config['hook_token'], \
         config['botsdir'], \
@@ -54,13 +54,13 @@ def relist(config_name, filesdir='bots/files', queuedir='bots/queue'):
 # The images that came before file_i are untouched and recorded in the filelist
 # The images that came before file_i are still deleted from filesidr
 # Reshuffles everything after file_i
-def removefiles(config_name, removelist, filesdir='bots/files'):
+def removefiles(config_name, removelist):
     with open(config_name) as config_file:
         config = json.load(config_file)
 
     # Remove the files from disk
     for f in removelist:
-        path = os.path.join(filesdir, f)
+        path = os.path.join(config['filesdir'], f)
 
         if os.path.exists(path):
             os.remove(path)
@@ -68,9 +68,9 @@ def removefiles(config_name, removelist, filesdir='bots/files'):
         else:
             print(f + ' not found. Not removed.')
 
-    config_name = os.path.basename(config_file.name)
-    config_name = os.path.splitext(config_name)[0]
-    initlist(config_name, \
+    bot_name = os.path.basename(config_name)
+    bot_name = os.path.splitext(bot_name)[0]
+    initlist(bot_name, \
         config['hook_id'], \
         config['hook_token'], \
         config['botsdir'], \
@@ -78,8 +78,9 @@ def removefiles(config_name, removelist, filesdir='bots/files'):
         config['filelist'][:config['file_i']])
 
 # Returns the next file name from the filelist and updates file_i
-def getfile(config_file):
-    config = json.load(config_file)
+def getfile(config_name):
+    with open(config_name) as config_file:
+        config = json.load(config_file)
 
     if len(config['filelist']) == 0:
         raise IndexError('Filelist is empty.')
@@ -89,9 +90,10 @@ def getfile(config_file):
 
     res = config['filelist'][config['file_i'] % len(config['filelist'])]
     config['file_i'] += 1
-    config_file.seek(0, 0)
-    config_file.truncate()
-    json.dump(config, config_file)
+
+    with open(config_name, 'w') as config_file:
+        json.dump(config, config_file)
+
     return res
 
 # Shuffles a list past the file_i
