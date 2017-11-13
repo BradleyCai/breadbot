@@ -25,18 +25,11 @@ def initlist(bot_name, hook_id, hook_token, botsdir='bots', filesdir='bots/files
         json.dump(config, config_file)
 
 # Inserts a directory of files into the current filelist
-def relist(config_file, filesdir='bots/files', queuedir='bots/queue'):
-    config = json.load(config_file)
-    queuelist = os.listdir(queuedir)
-    left = config['filelist'][:config['file_i']]
-    right = set(config['filelist'][config['file_i']:])
+def relist(config_name, filesdir='bots/files', queuedir='bots/queue'):
+    with open(config_name) as config_file:
+        config = json.load(config_file)
 
-    # Union queuelist, shuffle list, and update config file
-    config['filelist'] = left + list(right.union(queuelist))
-    shuffle(config['filelist'], config['file_i'])
-    config_file.seek(0, 0)
-    config_file.truncate()
-    json.dump(config, config_file)
+    queuelist = os.listdir(queuedir)
 
     for f in queuelist:
         src = os.path.join(queuedir, f)
@@ -48,15 +41,25 @@ def relist(config_file, filesdir='bots/files', queuedir='bots/queue'):
             os.rename(src, dst)
             print(f + ' moved.')
 
+    config_name = os.path.basename(config_file.name)
+    config_name = os.path.splitext(config_name)[0]
+    initlist(config_name, \
+        config['hook_id'], \
+        config['hook_token'], \
+        config['botsdir'], \
+        config['filesdir'], \
+        config['filelist'][:config['file_i']])
+
 # Removes a list of files from the filelist and filesdir
 # The images that came before file_i are untouched and recorded in the filelist
 # The images that came before file_i are still deleted from filesidr
 # Reshuffles everything after file_i
-def removefiles(config_file, files, filesdir='bots/files'):
-    config = json.load(config_file)
+def removefiles(config_name, removelist, filesdir='bots/files'):
+    with open(config_name) as config_file:
+        config = json.load(config_file)
 
     # Remove the files from disk
-    for f in files:
+    for f in removelist:
         path = os.path.join(filesdir, f)
 
         if os.path.exists(path):

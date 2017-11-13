@@ -30,7 +30,7 @@ class FileListerTests(unittest.TestCase):
         self.assertEqual(self.config['filesdir'], self.filesdir)
         self.assertEqual(set(self.config['filelist']), set(os.listdir(self.filesdir)))
 
-    def test_initlist_renew(self):
+    def test_initlist_(self):
         os.remove(os.path.join(self.filesdir, os.listdir(self.filesdir)[0]))
         filelister.initlist('tests', 'test2', 'test2', botsdir=self.botsdir, filesdir=self.filesdir, used=['1', '2', '3'])
         with open(self.config_name) as config_file:
@@ -44,8 +44,7 @@ class FileListerTests(unittest.TestCase):
         self.assertEqual(len(self.config['filelist']), 11)
 
     def test_relist(self):
-        with open(os.path.join(self.config_name), 'r+') as config_file:
-            filelister.relist(config_file, filesdir=self.filesdir, queuedir=self.queuedir)
+        filelister.relist(self.config_name, filesdir=self.filesdir, queuedir=self.queuedir)
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
         fileset = set(self.config['filelist'])
@@ -55,8 +54,7 @@ class FileListerTests(unittest.TestCase):
 
     def test_removefiles_all(self):
         self.remove = os.listdir('tests/bots/test-remove')
-        with open(os.path.join(self.config_name), 'r+') as config_file:
-            filelister.removefiles(config_file, self.remove, filesdir=self.filesdir)
+        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
@@ -67,11 +65,13 @@ class FileListerTests(unittest.TestCase):
 
     def test_removefiles_all_mid_i(self):
         self.remove = os.listdir('tests/bots/test-remove')
-        with open(os.path.join(self.config_name), 'r+') as config_file:
+
+        with open(self.config_name, 'r+') as config_file:
             self.config['file_i'] = 3
             json.dump(self.config, config_file)
-        with open(self.config_name, 'r+') as config_file:
-            filelister.removefiles(config_file, self.remove, filesdir=self.filesdir)
+
+        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
+
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
@@ -81,11 +81,12 @@ class FileListerTests(unittest.TestCase):
 
     def test_removefiles_mixed_mid_i(self):
         self.remove = os.listdir('tests/bots/test-remove-mixed')
-        with open(os.path.join(self.config_name), 'r+') as config_file:
+        with open(self.config_name, 'r+') as config_file:
             self.config['file_i'] = 3
             json.dump(self.config, config_file)
-        with open(self.config_name, 'r+') as config_file:
-            filelister.removefiles(config_file, self.remove, filesdir=self.filesdir)
+
+        filelister.removefiles(self.config_name, self.remove, filesdir=self.filesdir)
+
         with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
@@ -96,9 +97,9 @@ class FileListerTests(unittest.TestCase):
 
     def test_getfile(self):
         file_i = self.config['file_i']
-        with open(os.path.join(self.config_name), 'r+') as config_file:
+        with open(self.config_name, 'r+') as config_file:
             img_name = filelister.getfile(config_file)
-        with open(os.path.join(self.config_name)) as config_file:
+        with open(self.config_name) as config_file:
             self.config = json.load(config_file)
 
         self.assertEqual(file_i + 1, self.config['file_i'])
