@@ -24,6 +24,20 @@ def initlist(bot_name, hook_id, hook_token, botsdir='bots', filesdir='bots/files
     with open(os.path.join(botsdir, bot_name + '.json'), 'w') as config_file:
         json.dump(config, config_file)
 
+# Updates a config file for a filelist
+def updatelist(config_name, hook_id=None, hook_token=None, botsdir=None, filesdir=None, used=None):
+    with open(config_name) as config_file:
+        config = json.load(config_file)
+
+    bot_name = os.path.basename(config_name)
+    bot_name = os.path.splitext(bot_name)[0]
+    initlist(bot_name, \
+        config['hook_id'] if hook_id == None else hook_id, \
+        config['hook_token'] if hook_token == None else hook_token, \
+        config['botsdir'] if botsdir == None else botsdir, \
+        config['filesdir'] if filesdir == None else filesdir, \
+        config['filelist'][:config['file_i']] if used == None else used)
+
 # Inserts a directory of files into the current filelist
 def insertfiles(config_name, queuedir='bots/queue'):
     with open(config_name) as config_file:
@@ -41,14 +55,7 @@ def insertfiles(config_name, queuedir='bots/queue'):
             os.rename(src, dst)
             print(f + ' moved.')
 
-    bot_name = os.path.basename(config_name)
-    bot_name = os.path.splitext(bot_name)[0]
-    initlist(bot_name, \
-        config['hook_id'], \
-        config['hook_token'], \
-        config['botsdir'], \
-        config['filesdir'], \
-        config['filelist'][:config['file_i']])
+    updatelist(config_name)
 
 # Removes a list of files from the filelist and filesdir
 # The images that came before file_i are untouched and recorded in the filelist
@@ -68,14 +75,7 @@ def removefiles(config_name, removelist):
         else:
             print(f + ' not found. Not removed.')
 
-    bot_name = os.path.basename(config_name)
-    bot_name = os.path.splitext(bot_name)[0]
-    initlist(bot_name, \
-        config['hook_id'], \
-        config['hook_token'], \
-        config['botsdir'], \
-        config['filesdir'], \
-        config['filelist'][:config['file_i']])
+    updatelist(config_name)
 
 # Returns the next file name from the filelist and updates file_i
 def getfile(config_name):
