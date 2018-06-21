@@ -12,6 +12,7 @@ def main():
     parser.add_argument('botsdir', nargs='?', default='bots', help='bot directory other than ./bots', type=str)
     parser.add_argument('filesdir', nargs='?', default='bots/files', help='files directory other than ./bots/files', type=str)
     parser.add_argument('queuedir', nargs='?', default='bots/queue', help='queue directory other than ./bots/queue', type=str)
+    parser.add_argument('-r', '--random', action='store_true', help='grab files at random, otherwise done through the filelister')
     args = parser.parse_args()
 
     config_name = os.path.join(args.botsdir, args.name + '.json')
@@ -35,7 +36,11 @@ def main():
         hook_id = config['hook_id']
         hook_token = config['hook_token']
 
-    imgname = filelister.getfile(config_name)
+    if args.random:
+        filedirlist = os.listdir('./bots/files')
+        imgname = filedirlist[random.randint(0, len(filedirlist))]
+    else:
+        imgname = filelister.getfile(config_name)
 
     imgpath = os.path.join(filesdir, imgname)
     with open(imgpath, "rb") as img:
